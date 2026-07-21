@@ -1,84 +1,63 @@
-# Misconception Map — Devpost Submission
+# Misconception Map — Devpost Submission Copy
 
-**Track:** Education  
-**One-line pitch:** Misconception Map helps teachers turn a pile of student answers into a clear map of class-wide misconceptions, targeted reteaching groups, personalized feedback, and practice activities.
+**Category:** Education
+**Tagline:** Turn Grade 5–8 math exit-ticket reasoning into an evidence-verified, teacher-correctable plan for tomorrow.
 
 ## Project description
 
-Teachers often know who missed a question but do not have enough time to understand how every student was thinking. Misconception Map turns anonymized written responses into an evidence-linked view of class reasoning. It identifies shared misconception patterns, shows the exact student language behind each pattern, and converts those insights into concrete next instructional moves.
+Misconception Map is an evidence-verified, teacher-correctable instructional planning tool for Grade 5–8 math exit tickets. It turns raw student reasoning into misconception clusters, targeted small groups, and a next-day reteaching plan.
 
-The product is teacher decision support—not an AI tutor, diagnostic tool, or black-box auto-grader. Every cluster is presented as a reviewable hypothesis, and teacher judgment remains explicit throughout the experience.
+Unlike an AI grader, Misconception Map does not reduce student work to a score. It identifies reasoning patterns, verifies the supporting evidence, lets teachers correct the map, and turns the result into a next-day teaching plan.
 
-## What it does
+## The problem
 
-A teacher adds an assignment prompt, learning objective, rubric, and a set of anonymized responses. Misconception Map then provides:
-
-- A visual class-wide distribution of thinking patterns
-- Three to six useful misconception clusters
-- Exact response snippets as evidence
-- Student IDs and confidence for each cluster
-- Teacher-facing notes and student-friendly feedback
-- Suggested next moves and targeted practice
-- A 10-minute mini lesson, small groups, teacher script, and exit ticket
-- Markdown, CSV, and JSON exports
-
-Judges can load an 18-response fractions class and see a complete analysis in seconds without creating an account or adding credentials.
+An incorrect answer does not tell a teacher why a student chose it or whether several students share the same hidden rule. Reviewing a class set of written explanations and translating them into groups and lesson decisions is cognitively demanding. Misconception Map creates a reviewable first map while keeping instructional judgment with the teacher.
 
 ## How it works
 
-The browser parses plain text or CSV into anonymized response records. A server route validates the assignment and responses with Zod. If an OpenAI key is available, the route sends the evidence and rubric to the OpenAI Responses API and requests a strict structured output. The returned analysis is validated again before it reaches the UI.
+1. **Collect:** The teacher adds the math prompt, expected reasoning, and anonymized responses by paste, CSV, upload, or one response at a time.
+2. **Understand:** GPT-5.6 produces a structured first map. Deterministic application code validates the schema and verifies every displayed quote as an exact substring of the matching original response. Non-exact quotes are removed.
+3. **Act:** The teacher can reassign any student locally. Counts, percentages, top priority, and small-group membership recalculate without another model request. The reviewed map becomes a mini lesson, groups, targeted practice, and an exit ticket.
 
-When no API key is present—or a live request fails—the app switches safely to a deterministic analyzer for the built-in fractions dataset. That mode returns realistic misconception clusters, evidence quotes, feedback, practice, and a reteaching plan, making the full judging experience reliable.
+## GPT-5.6 at runtime
 
-## How GPT-5.6 is used
+The server-side `/api/analyze` route validates the submitted context and anonymized responses, calls the OpenAI Responses API with `gpt-5.6`, requests Zod-structured output, validates the result, and runs an independent evidence-verification pass before returning it. The API key remains in a server environment variable and never reaches the browser.
 
-GPT-5.6 powers live misconception analysis when API mode is enabled. The model is asked to act as an instructional coach: group similar reasoning errors, cite exact evidence, distinguish uncertainty, avoid unsupported claims, and generate teacher-usable next steps. The model name is set with `OPENAI_MODEL` and defaults to `gpt-5.6`.
+When the key is unavailable, only the labeled fraction sample may use its deterministic precomputed fallback. Custom responses never silently receive a mock result, and live versus demo mode is always disclosed.
 
-The live response is constrained by a structured JSON schema and validated at runtime. API credentials stay on the server.
+## Teacher Review Loop
+
+The Students view lets the teacher move a student to another misconception, Secure reasoning, or Needs teacher review. This interaction is deterministic and local: it does not call GPT-5.6 again and it prevents stale student IDs from remaining in prior small groups.
 
 ## How Codex was used
 
-Codex accelerated the project from product brief to complete full-stack MVP. It helped:
+The builder used Codex as an engineering, product-design, QA, and submission collaborator. Codex accelerated the App Router architecture, shared Zod contracts, protected server route, evidence verifier, teacher-correction logic, responsive dashboard, exports, automated tests, browser QA, and documentation. Product scope, educational framing, safety boundaries, and final design decisions remained builder decisions.
 
-- Scaffold and organize the App Router application
-- Translate instructional requirements into a shared TypeScript/Zod schema
-- Build deterministic sample data and misconception logic
-- Implement the protected OpenAI route and failure fallback
-- Design and polish the responsive teacher workflow
-- Create parser and export utilities
-- Write tests, documentation, and the less-than-three-minute demo script
-- Verify lint, test, and production build behavior
+## Safety
 
-## Technical implementation
+- Teacher review is required.
+- Analysis is based only on submitted responses and assignment context.
+- Use anonymized student IDs, never names.
+- The tool does not diagnose students or infer a fixed profile.
+- It is not an auto-grader or teacher replacement.
 
-- Next.js App Router / vinext, React, and TypeScript
-- Tailwind CSS plus a custom responsive design system
-- OpenAI JavaScript SDK and Responses API
-- Zod input and output validation
-- Server-side secret handling
-- Local state and `localStorage`; no database or authentication
-- Node test runner with TypeScript support
-- Cloudflare Worker-compatible build and hosting configuration
+## Technology
 
-## Impact
+`OpenAI GPT-5.6` · `Codex` · `OpenAI Responses API` · `Next.js` · `React` · `TypeScript` · `Zod` · `Cloudflare-compatible Sites runtime`
 
-Misconception Map shortens the distance between collecting student work and deciding what to teach next. Instead of spending planning time manually sorting 20–30 answers, a teacher gets a reviewable first map organized around reasoning. The payoff is not faster grading—it is more targeted instruction, clearer feedback, and better use of small-group time.
+## Judge testing path
 
-## What makes it novel
+1. Open the public project URL.
+2. Click **Analyze fraction demo**.
+3. Confirm the **Live GPT-5.6** and **Evidence Verified** badges.
+4. Open **Misconception Map** and inspect exact student evidence.
+5. Open **Students**, reassign S02, and confirm the distribution changes without rerunning AI.
+6. Open **Teach Tomorrow** and inspect the updated groups and exit ticket.
+7. Download the teacher report or student action sheet.
 
-Most education AI products center the student-chatbot interaction or automate a score. Misconception Map centers the teacher's class-level decision. Its unit of value is a shared reasoning pattern with cited evidence and an actionable teaching response. That makes the AI output auditable, instructionally specific, and useful even before a teacher speaks to an individual student.
+## Required links to add before submission
 
-## How judges can run it
-
-1. Install dependencies with `npm install`.
-2. Start with `npm run dev`.
-3. Open the printed local URL.
-4. Click **Try demo class**.
-5. Explore the distribution, evidence cards, student feedback, reteaching plan, and exports.
-
-No API key is needed for the full demo. To test live mode, set `OPENAI_API_KEY` and optionally `OPENAI_MODEL=gpt-5.6`, then restart the server.
-
-## Suggested tags
-
-`education` `teachers` `assessment-for-learning` `GPT-5.6` `Codex` `structured-output` `responsible-ai` `Next.js`
-
+- Public project URL: `TODO`
+- Public or judge-shared GitHub repository: `TODO`
+- Public YouTube demo under three minutes: `TODO`
+- `/feedback` Codex Session ID: `TODO`

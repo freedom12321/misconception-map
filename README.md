@@ -71,6 +71,13 @@ npm run dev
 
 Never commit `.env.local` or place the key in a `NEXT_PUBLIC_` variable. For production, configure `OPENAI_API_KEY` as a secret and `OPENAI_MODEL=gpt-5.6` in the hosting environment, then redeploy.
 
+### Public repository safety
+
+- `.env.local`, `.env*`, build output, Wrangler logs, and the local Sites binding are ignored.
+- Commit `.env.example` only; it contains no credential.
+- `.openai/hosting.example.json` is a placeholder. Keep the real `.openai/hosting.json` local.
+- Before every public push, run `git grep -l -E 'sk-(proj-)?[A-Za-z0-9_-]{16,}'` and confirm it returns no files.
+
 ## Live mode and demo mode
 
 - **Live GPT-5.6 mode:** when `OPENAI_API_KEY` is configured, both custom responses and the fraction sample make a fresh server-side request. The result displays a live model badge.

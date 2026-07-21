@@ -1,51 +1,55 @@
-# Misconception Map — Video Demo Script
+# Misconception Map — 3-Minute Demo Script
 
-**Target length:** 2 minutes, 55 seconds
+**Target:** 2:50–2:58
+**Required:** Public YouTube video with voiceover explaining both Codex and GPT-5.6.
 
-## 0:00–0:20 — The problem
+## 0:00–0:22 — Positioning
 
-**On screen:** Hero, then a quick glimpse of a stack of responses.
+**On screen:** Hero and Collect → Understand → Act.
 
-**Voiceover:** “A score tells a teacher who got a question wrong. It rarely tells them how the class was thinking—or what to teach tomorrow. Misconception Map turns student answers into a clear, evidence-based map of shared reasoning.”
+**Voiceover:** “Misconception Map is an evidence-verified, teacher-correctable planning tool for Grade 5–8 math exit tickets. Unlike an AI grader, it does not reduce student work to a score. It identifies reasoning patterns, verifies the evidence, lets teachers correct the map, and turns the result into a next-day teaching plan.”
 
-## 0:20–0:40 — Load the demo class
+## 0:22–0:48 — Real input
 
-**On screen:** Click **Try demo class**. Briefly show the prefilled Grade 6 fraction prompt and 18 anonymized responses.
+**On screen:** Open the workspace, load the fraction sample, and add S19 with a short anonymous response.
 
-**Voiceover:** “I’ll load a sixth-grade class answering one-half plus one-third. The question, rubric, and eighteen anonymized responses are ready. No student names, account, or API key is required.”
+**Voiceover:** “Teachers can enter their own prompt and anonymous responses by paste, CSV, upload, or one at a time. I’m using the primary Grade 6 fraction exit ticket and adding a new response to show this is a real input workflow, not a preset slideshow.”
 
-## 0:40–0:58 — Run the analysis
+## 0:48–1:15 — Live GPT-5.6 proof
 
-**On screen:** Loading state, then the analysis overview.
+**On screen:** Click Analyze. Cut the loading time. Land on the above-the-fold result.
 
-**Voiceover:** “The app analyzes the original reasoning, not just the final answer. Live mode uses GPT-5.6 through a validated server route. For a reliable judging demo, deterministic mode returns the same structured analysis without credentials.”
+**Voiceover:** “At runtime, the protected server route calls GPT-5.6 through the Responses API and requires structured Zod output. The API key stays on the server. This Live GPT-5.6 badge proves the result is fresh; precomputed fallback is separately labeled and restricted to the sample.”
 
-## 0:58–1:25 — Follow the judge demo path
+Point to:
 
-**On screen:** Keep the viewport on Misconception Distribution and Top Teaching Priority, then follow the on-screen path to Evidence from Student Work and What I Would Teach Tomorrow.
+- Total student responses
+- Top Teaching Priority
+- Misconception distribution
+- Suggested First Teaching Move
+- Live GPT-5.6
+- Evidence Verified
 
-**Voiceover:** “Here is the class map: six students show secure thinking, while four misconception patterns need attention. The top priority is adding numerator and denominator straight across. The key is traceability: two exact quotes reveal the shared rule, and that evidence becomes a concrete lesson decision—meaning before method.”
+## 1:15–1:42 — Evidence verification
 
-## 1:25–1:52 — Open one pattern and feedback row
+**On screen:** Open Misconception Map and show Evidence from Student Work.
 
-**On screen:** Open the first pattern's targeted practice. Then filter the student table to **Add across** and copy S02's feedback.
+**Voiceover:** “The model does not get the final word on evidence. Deterministic code checks every displayed quote against the corresponding original response and removes anything that is not an exact substring. Evidence Verified appears only when that pass succeeds.”
 
-**Voiceover:** “The full pattern adds likely reasoning, instructional risk, a teacher move, and three targeted questions. At the student level, I can review the original answer, teacher note, and warm feedback. These are suggestions for professional review—not automatic grades.”
+## 1:42–2:12 — Teacher Review Loop
 
-## 1:52–2:18 — Show the reteaching plan
+**On screen:** Open Students. Move S02 from Add across to another cluster.
 
-**On screen:** Switch through Tomorrow at a Glance, Mini Lesson, Small Groups, and Exit Ticket.
+**Voiceover:** “This is a first map, not an automatic verdict. I can correct S02’s placement using classroom knowledge. The Teacher adjusted badge appears, cluster counts and percentages update immediately, and no second model request is made.”
 
-**Voiceover:** “The analysis becomes a plan for tomorrow: a ten-minute mini lesson with a teacher script, groups based on reasoning, three targeted practice questions per misconception, common wrong answers to watch for, and a ready-to-print exit ticket.”
+## 2:12–2:38 — Teach Tomorrow
 
-## 2:18–2:45 — Exports and Built with Codex
+**On screen:** Open Teach Tomorrow, then Small groups and Exit ticket.
 
-**On screen:** Export cards; download a teacher report. Scroll to **Built with Codex**.
+**Voiceover:** “The correction flows into tomorrow’s plan. S02 leaves the old group, joins the selected group, and no stale student ID remains. The teacher gets a ten-minute mini lesson, targeted groups, practice, and an exit ticket—all still subject to professional review.”
 
-**Voiceover:** “The Markdown report includes the evidence, groups, script, common wrong answers, and exit ticket; the feedback CSV preserves the original response and teacher context. Codex built the full-stack product, schema, fallback, exports, tests, and judging materials. GPT-5.6 performs the live structured analysis at runtime.”
+## 2:38–2:57 — Codex and close
 
-## 2:45–2:55 — Closing impact
+**On screen:** Briefly show an export, then Built with Codex.
 
-**On screen:** Return to the hero tagline or the distribution card.
-
-**Voiceover:** “Misconception Map does not replace teacher judgment. It helps teachers see the thinking, group with purpose, and make the next instructional move.”
+**Voiceover:** “Codex accelerated the full-stack architecture, structured contracts, protected API route, evidence verifier, teacher-correction logic, interface, exports, tests, and browser QA. GPT-5.6 powers the runtime first map; deterministic verification and teacher judgment make it instructionally usable. See the reasoning. Correct the map. Teach tomorrow.”
