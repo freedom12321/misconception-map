@@ -119,7 +119,7 @@ const clusterSeeds: ClusterSeed[] = [
     title: "Estimation or magnitude confusion",
     shortLabel: "Magnitude check",
     severity: "medium",
-    studentIds: ["S06", "S12", "S13"],
+    studentIds: ["S06", "S12"],
     description:
       "Students are using informal size comparisons or guesses that do not yet constrain the answer to a reasonable interval.",
     likelyReasoning:
@@ -282,9 +282,15 @@ function demoAnalysis(assignment: Assignment, responses: StudentResponse[]): Ana
         },
         {
           groupName: "Group C · Estimate, then calculate",
-          studentIds: ["S06", "S12", "S13"].filter((id) => byId.has(id)),
+          studentIds: ["S06", "S12"].filter((id) => byId.has(id)),
           focus: "Use 0, 1/2, and 1 to bound a fraction sum.",
           activity: "Place candidate sums on a number line, eliminate impossible answers, and then calculate exactly.",
+        },
+        {
+          groupName: "Quick conference · Need one more step",
+          studentIds: ["S13"].filter((id) => byId.has(id)),
+          focus: "Collect enough evidence before assigning a misconception pattern.",
+          activity: "Ask the student to model 1/2 and 1/3, then explain how the guess of 4/6 was chosen. Regroup only after listening.",
         },
         {
           groupName: "Extension · Prove it two ways",
@@ -322,7 +328,7 @@ function demoAnalysis(assignment: Assignment, responses: StudentResponse[]): Ana
         "1/7 — preserving the numerator and combining denominators",
       ],
       tomorrowPlan:
-        "Open with the 10-minute visual mini lesson, then rotate through three misconception-based groups while students with secure reasoning complete a two-strategy extension. Close with the 1/4 + 1/3 exit ticket and sort it by reasoning pattern, not only correctness.",
+        "Open with the 10-minute visual mini lesson, then rotate through three misconception-based groups while students with secure reasoning complete a two-strategy extension. Hold a two-minute conference with S13 before assigning a group. Close with the 1/4 + 1/3 exit ticket and sort it by reasoning pattern, not only correctness.",
     },
     parentOrAdminSummary:
       "Student work shows that several learners are ready to use common denominators, while others need a stronger connection between fraction symbols and equal-size parts. Tomorrow's lesson will use visual models, targeted small groups, and a brief exit ticket to address these specific patterns. This analysis supports—but does not replace—teacher review.",
@@ -446,4 +452,3 @@ export function createMockAnalysis(
       : genericAnalysis(assignment, responses),
   );
 }
-

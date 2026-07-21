@@ -14,7 +14,7 @@ export function Hero({ onTryDemo, onAnalyzeResponses, isLoading }: HeroProps) {
         </a>
         <div className="nav-links">
           <a href="#how-it-works">How it works</a>
-          <a href="#safety">Safety</a>
+          <a href="#impact">Teacher impact</a>
           <a href="#built-with-codex">Build Week</a>
         </div>
         <button className="button button-small button-ink" onClick={onAnalyzeResponses}>
@@ -112,7 +112,22 @@ export function Hero({ onTryDemo, onAnalyzeResponses, isLoading }: HeroProps) {
           </article>
         </div>
       </section>
+
+      <section className="impact-proof" id="impact" aria-labelledby="impact-title">
+        <div className="impact-copy">
+          <p className="section-kicker">WHY THIS MATTERS</p>
+          <h2 id="impact-title">From a stack of answers to one reviewable teaching decision.</h2>
+          <p>Misconception Map does not replace a teacher or declare a final grade. It shortens the first-pass review so teachers can spend their time confirming patterns, listening to students, and choosing the right next move.</p>
+        </div>
+        <div className="impact-equation" aria-label="18 student explanations become 4 shared reasoning patterns and 1 plan for tomorrow">
+          <div><strong>18</strong><span>student explanations</span></div>
+          <b aria-hidden="true">→</b>
+          <div><strong>4</strong><span>shared reasoning patterns</span></div>
+          <b aria-hidden="true">→</b>
+          <div><strong>1</strong><span>plan for tomorrow</span></div>
+        </div>
+        <div className="impact-guardrail"><span>Teacher stays in control</span><strong>Evidence, not verdicts.</strong><p>Every recommendation is a hypothesis tied to student work and marked for teacher review.</p></div>
+      </section>
     </header>
   );
 }
-

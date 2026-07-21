@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnalysisDashboard } from "../components/AnalysisDashboard";
 import { AssignmentForm } from "../components/AssignmentForm";
+import { BuiltWithCodex } from "../components/BuiltWithCodex";
 import { Hero } from "../components/Hero";
 import { AnalysisResultSchema } from "../lib/schema";
 import type { AnalysisResult, Assignment, StudentResponse } from "../lib/schema";
@@ -124,10 +125,11 @@ export default function Home() {
           <button className="button button-ink" onClick={() => loadDemo(true)} disabled={isLoading}>Run the demo analysis <span aria-hidden="true">→</span></button>
         </section>
       )}
+      <BuiltWithCodex />
       <footer className="site-footer">
         <div className="brand"><span className="brand-mark" aria-hidden="true">M</span><span>Misconception Map</span></div>
         <p>See the thinking. Plan the next move.</p>
-        <div><a href="#safety">Evidence & safety</a><a href="#built-with-codex">Built with Codex</a><span>Education · Build Week 2026</span></div>
+        <div><a href="#impact">Teacher impact</a><a href="#built-with-codex">Built with Codex</a><span>Education · Build Week 2026</span></div>
       </footer>
     </div>
   );

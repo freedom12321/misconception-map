@@ -92,8 +92,8 @@ export function AssignmentForm({
           <span>02</span>
           <div><h3>Student responses</h3><p>Use anonymized IDs only—no student names.</p></div>
           <div className="input-tabs" role="tablist" aria-label="Response input format">
-            <button className={inputMode === "paste" ? "active" : ""} onClick={() => setInputMode("paste")} type="button">Plain text</button>
-            <button className={inputMode === "csv" ? "active" : ""} onClick={() => setInputMode("csv")} type="button">CSV</button>
+            <button role="tab" aria-selected={inputMode === "paste"} className={inputMode === "paste" ? "active" : ""} onClick={() => setInputMode("paste")} type="button">Plain text</button>
+            <button role="tab" aria-selected={inputMode === "csv"} className={inputMode === "csv" ? "active" : ""} onClick={() => setInputMode("csv")} type="button">CSV</button>
           </div>
         </div>
 
@@ -112,6 +112,7 @@ export function AssignmentForm({
             <input ref={fileRef} type="file" accept=".csv,text/csv,text/plain" hidden onChange={(e) => void handleFile(e.target.files?.[0])} />
           </div>
         </div>
+        <p className="response-format-hint">{inputMode === "csv" ? "CSV columns: student_id,response. Quoted commas are supported." : "Use one response per line, beginning with an anonymized ID such as S01:"}</p>
 
         {error && <div className="error-banner" role="alert"><strong>We hit a snag.</strong> {error}</div>}
 
@@ -128,4 +129,3 @@ export function AssignmentForm({
     </section>
   );
 }
-

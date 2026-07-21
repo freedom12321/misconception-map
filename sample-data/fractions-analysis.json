@@ -170,10 +170,9 @@
       "severity": "medium",
       "studentIds": [
         "S06",
-        "S12",
-        "S13"
+        "S12"
       ],
-      "percentOfClass": 16.7,
+      "percentOfClass": 11.1,
       "description": "Students are using informal size comparisons or guesses that do not yet constrain the answer to a reasonable interval.",
       "likelyReasoning": "Benchmarks such as 0, 1/2, and 1 are not being used consistently, so an answer can be accepted without checking its size.",
       "evidenceQuotes": [
@@ -184,10 +183,6 @@
         {
           "studentId": "S12",
           "quote": "2/3 because 1/2 is close to 1/3."
-        },
-        {
-          "studentId": "S13",
-          "quote": "I don't know. I guessed 4/6."
         }
       ],
       "instructionalRisk": "Without magnitude checks, students have no independent way to catch procedural errors or explain why an answer makes sense.",
@@ -338,7 +333,7 @@
       "studentId": "S13",
       "response": "I don't know. I guessed 4/6.",
       "status": "unclear",
-      "misconceptionId": "magnitude-confusion",
+      "misconceptionId": null,
       "confidence": 0.62,
       "teacherNote": "The response is too brief to distinguish a conversion error from a guess. Ask for a quick think-aloud.",
       "studentFeedback": "You chose sixths, which can be a useful unit. Show how each original fraction changes into sixths so we can follow your thinking.",
@@ -430,11 +425,18 @@
         "groupName": "Group C · Estimate, then calculate",
         "studentIds": [
           "S06",
-          "S12",
-          "S13"
+          "S12"
         ],
         "focus": "Use 0, 1/2, and 1 to bound a fraction sum.",
         "activity": "Place candidate sums on a number line, eliminate impossible answers, and then calculate exactly."
+      },
+      {
+        "groupName": "Quick conference · Need one more step",
+        "studentIds": [
+          "S13"
+        ],
+        "focus": "Collect enough evidence before assigning a misconception pattern.",
+        "activity": "Ask the student to model 1/2 and 1/3, then explain how the guess of 4/6 was chosen. Regroup only after listening."
       },
       {
         "groupName": "Extension · Prove it two ways",
@@ -476,7 +478,7 @@
       "2/12 — choosing a common denominator but not scaling numerators",
       "1/7 — preserving the numerator and combining denominators"
     ],
-    "tomorrowPlan": "Open with the 10-minute visual mini lesson, then rotate through three misconception-based groups while students with secure reasoning complete a two-strategy extension. Close with the 1/4 + 1/3 exit ticket and sort it by reasoning pattern, not only correctness."
+    "tomorrowPlan": "Open with the 10-minute visual mini lesson, then rotate through three misconception-based groups while students with secure reasoning complete a two-strategy extension. Hold a two-minute conference with S13 before assigning a group. Close with the 1/4 + 1/3 exit ticket and sort it by reasoning pattern, not only correctness."
   },
   "parentOrAdminSummary": "Student work shows that several learners are ready to use common denominators, while others need a stronger connection between fraction symbols and equal-size parts. Tomorrow's lesson will use visual models, targeted small groups, and a brief exit ticket to address these specific patterns. This analysis supports—but does not replace—teacher review.",
   "limitations": [

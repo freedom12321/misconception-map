@@ -8,9 +8,11 @@ function csvCell(value: string | number) {
 export function exportFeedbackCsv(result: AnalysisResult): string {
   const header = [
     "student_id",
+    "original_response",
     "status",
     "misconception_cluster",
-    "confidence",
+    "confidence_percent",
+    "teacher_note",
     "student_friendly_feedback",
     "next_step",
   ];
@@ -19,11 +21,13 @@ export function exportFeedbackCsv(result: AnalysisResult): string {
   );
   const rows = result.students.map((student) => [
     student.studentId,
+    student.response,
     student.status,
     student.misconceptionId
       ? misconceptionLabels.get(student.misconceptionId) ?? student.misconceptionId
       : "",
     Math.round(student.confidence * 100),
+    student.teacherNote,
     student.studentFeedback,
     student.nextStep,
   ]);
@@ -31,12 +35,17 @@ export function exportFeedbackCsv(result: AnalysisResult): string {
 }
 
 export function exportTeacherMarkdown(result: AnalysisResult): string {
+  const topPriority = result.misconceptions.find(
+    (item) => item.id === result.overview.topMisconceptionId,
+  ) ?? result.misconceptions[0];
   const lines = [
     "# Misconception Map — Teacher Report",
     "",
     `**Subject:** ${result.assignmentSummary.subject}`,
     `**Grade:** ${result.assignmentSummary.gradeLevel}`,
     `**Learning objective:** ${result.assignmentSummary.learningObjective}`,
+    `**Question:** ${result.assignmentSummary.question}`,
+    `**Rubric:** ${result.assignmentSummary.rubricSummary}`,
     "",
     "## Class overview",
     "",
@@ -47,6 +56,25 @@ export function exportTeacherMarkdown(result: AnalysisResult): string {
     `- Responses showing a misconception: ${result.overview.misconceptionCount}`,
     `- Unclear responses: ${result.overview.unclearCount}`,
     "",
+    "## Top teaching priority",
+    "",
+    topPriority ? `### ${topPriority.title}` : "No priority pattern identified.",
+    "",
+    ...(topPriority
+      ? [
+          `${topPriority.studentIds.length} students (${topPriority.percentOfClass}% of class) showed this pattern.`,
+          "",
+          `**Why teach this first:** ${topPriority.instructionalRisk}`,
+          `**First teacher move:** ${topPriority.teacherMove}`,
+          "",
+          "**Evidence from student work**",
+          "",
+          ...topPriority.evidenceQuotes.slice(0, 3).map(
+            (evidence) => `- ${evidence.studentId}: “${evidence.quote}”`,
+          ),
+          "",
+        ]
+      : []),
     "## Misconception patterns",
     "",
   ];
@@ -95,11 +123,33 @@ export function exportTeacherMarkdown(result: AnalysisResult): string {
     "",
     `**Check for understanding:** ${result.reteachingPlan.tenMinuteMiniLesson.checkForUnderstanding}`,
     "",
+    "### Small groups",
+    "",
+    ...result.reteachingPlan.smallGroups.flatMap((group) => [
+      `#### ${group.groupName}`,
+      "",
+      `- **Students:** ${group.studentIds.join(", ")}`,
+      `- **Focus:** ${group.focus}`,
+      `- **Activity:** ${group.activity}`,
+      "",
+    ]),
+    "### Common wrong answers to watch for",
+    "",
+    ...result.reteachingPlan.commonWrongAnswers.map((item) => `- ${item}`),
+    "",
     "### Exit ticket",
     "",
     result.reteachingPlan.exitTicket.prompt,
     "",
     `**Answer:** ${result.reteachingPlan.exitTicket.correctAnswer}`,
+    "",
+    "**Look-fors:**",
+    "",
+    ...result.reteachingPlan.exitTicket.lookFors.map((item) => `- ${item}`),
+    "",
+    "## Family / administrator summary",
+    "",
+    result.parentOrAdminSummary,
     "",
     "## Guardrails",
     "",
@@ -110,4 +160,3 @@ export function exportTeacherMarkdown(result: AnalysisResult): string {
 
   return lines.join("\n");
 }
-

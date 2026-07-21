@@ -65,6 +65,20 @@ The demo also loads from **Load demo class** in the assignment form. The source 
 
 For custom content without an API key, demo mode takes a conservative approach: it preserves responses but avoids inventing content-specific misconception labels.
 
+## Three-minute judge demo
+
+The shortest high-signal path is designed into the interface:
+
+1. Start on the hero and frame the problem: scores show *who* missed a question; teachers still need to understand *how* the class was thinking.
+2. Click **Try demo class**. This loads and analyzes all 18 anonymized responses in one action.
+3. Follow the on-screen **Judge demo path**: class pattern → exact evidence → tomorrow's teaching decision.
+4. Open the first full pattern card to show confidence, student IDs, exact quotes, instructional risk, and targeted practice.
+5. Filter the student table to **Add across** and copy one student-friendly feedback note.
+6. Open the reteaching plan tabs, then export the teacher Markdown report.
+7. End on **Built with Codex** to show the build-time/runtime distinction and validated analysis pipeline.
+
+Avoid scrolling every table row or opening every cluster in the video; the product's value is the traceable path from evidence to instructional action.
+
 ## Live API mode
 
 Add the following to `.env.local`:
@@ -87,6 +101,7 @@ Restart the development server. Requests go to `POST /api/analyze`, which:
 npm run dev      # start the local development server
 npm run build    # create the production build
 npm run lint     # run ESLint
+npm run typecheck # run the strict TypeScript check
 npm test         # run parser, schema, export, and mock-analyzer tests
 ```
 
@@ -100,8 +115,8 @@ npx tsx scripts/generate-sample.ts
 
 After running an analysis, scroll to **Take it with you**:
 
-- **Teacher report (.md):** overview, clusters, evidence, practice, and reteaching plan
-- **Student feedback (.csv):** one row per anonymized student
+- **Teacher report (.md):** top priority, clusters, evidence, practice, small groups, lesson script, common wrong answers, exit ticket, and family/admin summary
+- **Student feedback (.csv):** original response, status, pattern, confidence, teacher note, feedback, and next step for each anonymized ID
 - **Full analysis (.json):** the complete validated result
 - **Parent/admin summary:** copied directly to the clipboard
 
@@ -145,4 +160,3 @@ Downloads are generated in the browser. No database is used.
 - Rubric import and multi-question assignment analysis
 - Multilingual feedback review
 - Classroom-level evaluation of cluster usefulness and teacher time saved
-

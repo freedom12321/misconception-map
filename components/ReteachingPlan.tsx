@@ -17,13 +17,13 @@ export function ReteachingPlan({ result }: { result: AnalysisResult }) {
       </div>
       <div className="plan-shell">
         <div className="plan-tabs" role="tablist" aria-label="Reteaching plan views">
-          <button className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}>Tomorrow at a glance</button>
-          <button className={tab === "lesson" ? "active" : ""} onClick={() => setTab("lesson")}>Mini lesson</button>
-          <button className={tab === "groups" ? "active" : ""} onClick={() => setTab("groups")}>Small groups</button>
-          <button className={tab === "exit" ? "active" : ""} onClick={() => setTab("exit")}>Exit ticket</button>
+          <button type="button" role="tab" aria-selected={tab === "overview"} className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}>Tomorrow at a glance</button>
+          <button type="button" role="tab" aria-selected={tab === "lesson"} className={tab === "lesson" ? "active" : ""} onClick={() => setTab("lesson")}>Mini lesson</button>
+          <button type="button" role="tab" aria-selected={tab === "groups"} className={tab === "groups" ? "active" : ""} onClick={() => setTab("groups")}>Small groups</button>
+          <button type="button" role="tab" aria-selected={tab === "exit"} className={tab === "exit" ? "active" : ""} onClick={() => setTab("exit")}>Exit ticket</button>
         </div>
 
-        <div className="plan-content">
+        <div className="plan-content" role="tabpanel" aria-live="polite">
           {tab === "overview" && (
             <div className="plan-overview-grid">
               <div className="tomorrow-card"><span className="micro-label">TOMORROW&apos;S PLAN</span><h3>One class period, four purposeful moves.</h3><p>{plan.tomorrowPlan}</p><ol><li><span>01</span><div><strong>Make the unit visible</strong><p>Lead the visual 10-minute mini lesson.</p></div></li><li><span>02</span><div><strong>Group by reasoning</strong><p>Use three targeted small groups plus an extension.</p></div></li><li><span>03</span><div><strong>Practice the exact gap</strong><p>Pull three questions from each misconception card.</p></div></li><li><span>04</span><div><strong>Check for transfer</strong><p>Close with a new unlike-denominator sum.</p></div></li></ol></div>

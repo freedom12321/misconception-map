@@ -10,9 +10,10 @@ test("deterministic analyzer returns the expected misconception clusters", () =>
   assert.deepEqual(clusters.get("add-across")?.studentIds, ["S02", "S08", "S15"]);
   assert.deepEqual(clusters.get("conversion-error")?.studentIds, ["S03", "S16", "S18"]);
   assert.deepEqual(clusters.get("component-confusion")?.studentIds, ["S05", "S09", "S10"]);
-  assert.deepEqual(clusters.get("magnitude-confusion")?.studentIds, ["S06", "S12", "S13"]);
+  assert.deepEqual(clusters.get("magnitude-confusion")?.studentIds, ["S06", "S12"]);
   assert.equal(result.overview.correctCount, 6);
   assert.equal(result.overview.totalResponses, 18);
+  assert.equal(result.students.find((student) => student.studentId === "S13")?.misconceptionId, null);
 });
 
 test("every major demo cluster cites at least two original responses", () => {
@@ -27,4 +28,3 @@ test("every major demo cluster cites at least two original responses", () => {
     }
   }
 });
-
