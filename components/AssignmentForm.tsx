@@ -1,16 +1,20 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { Assignment } from "../lib/schema";
+import type { Assignment, StudentResponse } from "../lib/schema";
 
 type AssignmentFormProps = {
   assignment: Assignment;
   onAssignmentChange: (assignment: Assignment) => void;
   responseText: string;
   onResponseTextChange: (value: string) => void;
-  parsedCount: number;
+  parsedResponses: StudentResponse[];
   onLoadDemo: () => void;
+  onStartBlank: () => void;
   onAnalyze: () => void;
+  isSample: boolean;
+  liveAnalysisAvailable: boolean | null;
+  liveModel: string | null;
   isLoading: boolean;
   error: string | null;
 };
@@ -20,14 +24,28 @@ export function AssignmentForm({
   onAssignmentChange,
   responseText,
   onResponseTextChange,
-  parsedCount,
+  parsedResponses,
   onLoadDemo,
+  onStartBlank,
   onAnalyze,
+  isSample,
+  liveAnalysisAvailable,
+  liveModel,
   isLoading,
   error,
 }: AssignmentFormProps) {
   const [inputMode, setInputMode] = useState<"paste" | "csv">("paste");
   const fileRef = useRef<HTMLInputElement>(null);
+  const responseRef = useRef<HTMLTextAreaElement>(null);
+  const parsedCount = parsedResponses.length;
+  const requiredFields = [
+    assignment.subject,
+    assignment.gradeLevel,
+    assignment.learningObjective,
+    assignment.question,
+    assignment.correctAnswer,
+  ];
+  const completedContext = requiredFields.filter((value) => value.trim()).length;
 
   function updateField(field: keyof Assignment, value: string) {
     onAssignmentChange({ ...assignment, [field]: value });
@@ -39,6 +57,13 @@ export function AssignmentForm({
     setInputMode("csv");
   }
 
+  function addResponseLine() {
+    const nextId = `S${String(parsedCount + 1).padStart(2, "0")}`;
+    const spacer = responseText.trim() ? "\n" : "";
+    onResponseTextChange(`${responseText.trimEnd()}${spacer}${nextId}: `);
+    window.setTimeout(() => responseRef.current?.focus(), 0);
+  }
+
   return (
     <section className="workspace-section" id="assignment" aria-labelledby="assignment-title">
       <div className="section-heading split-heading">
@@ -47,12 +72,44 @@ export function AssignmentForm({
           <h2 id="assignment-title">Bring the learning moment into focus.</h2>
           <p>Give the map enough context to interpret the thinking—not just score the answer.</p>
         </div>
-        <button className="button button-secondary load-demo-button" onClick={onLoadDemo} type="button">
-          <span aria-hidden="true">↻</span> Load demo class
-        </button>
+        <div className="workspace-heading-actions">
+          <button className="button button-secondary" onClick={onStartBlank} type="button">
+            <span aria-hidden="true">＋</span> Start blank
+          </button>
+          <button className="button button-secondary load-demo-button" onClick={onLoadDemo} type="button">
+            <span aria-hidden="true">◇</span> Load sample
+          </button>
+        </div>
       </div>
 
       <div className="setup-card">
+        <div className={`workspace-status ${liveAnalysisAvailable ? "workspace-status-live" : "workspace-status-offline"}`}>
+          <div>
+            <span className="status-light" aria-hidden="true" />
+            <p>
+              <strong>
+                {liveAnalysisAvailable === null
+                  ? "Checking the analysis connection…"
+                  : liveAnalysisAvailable
+                    ? `${liveModel ?? "GPT-5.6"} live analysis is ready`
+                    : "Custom analysis needs the server connection"}
+              </strong>
+              <small>
+                {liveAnalysisAvailable
+                  ? "Your anonymized responses will produce a fresh, schema-validated result."
+                  : "You can build and save a draft now. Only the labeled sample can use deterministic fallback."}
+              </small>
+            </p>
+          </div>
+          <span className="workspace-source">{isSample ? "Sample class loaded" : "My class workspace"}</span>
+        </div>
+
+        <div className="workflow-ribbon" aria-label="Custom analysis workflow">
+          <div className={completedContext === 5 ? "complete" : ""}><span>01</span><p><strong>Describe the task</strong>{completedContext}/5 required fields complete</p></div>
+          <div className={parsedCount > 0 ? "complete" : ""}><span>02</span><p><strong>Add student work</strong>{parsedCount || 0} responses detected</p></div>
+          <div><span>03</span><p><strong>Review the map</strong>Evidence, groups, lesson, exports</p></div>
+        </div>
+
         <div className="form-section-title">
           <span>01</span>
           <div><h3>Assignment context</h3><p>What were students learning and responding to?</p></div>
@@ -74,11 +131,11 @@ export function AssignmentForm({
         <div className="form-grid form-grid-two">
           <label>
             <span>Question / prompt</span>
-            <textarea rows={5} value={assignment.question} onChange={(e) => updateField("question", e.target.value)} />
+            <textarea rows={5} value={assignment.question} onChange={(e) => updateField("question", e.target.value)} placeholder="Paste the exact question students answered." />
           </label>
           <label>
             <span>Correct answer or rubric</span>
-            <textarea rows={5} value={assignment.correctAnswer} onChange={(e) => updateField("correctAnswer", e.target.value)} />
+            <textarea rows={5} value={assignment.correctAnswer} onChange={(e) => updateField("correctAnswer", e.target.value)} placeholder="What would strong reasoning include? Add scoring guidance if relevant." />
           </label>
         </div>
         <label className="full-label">
@@ -99,6 +156,7 @@ export function AssignmentForm({
 
         <div className="response-input-wrap">
           <textarea
+            ref={responseRef}
             className="response-input"
             rows={12}
             value={responseText}
@@ -108,11 +166,25 @@ export function AssignmentForm({
           />
           <div className="response-input-footer">
             <span><b>{parsedCount}</b> responses detected</span>
-            <button type="button" onClick={() => fileRef.current?.click()}><span aria-hidden="true">↑</span> Upload CSV</button>
+            <div>
+              <button type="button" onClick={addResponseLine}><span aria-hidden="true">＋</span> Add one response</button>
+              <button type="button" onClick={() => fileRef.current?.click()}><span aria-hidden="true">↑</span> Upload CSV</button>
+            </div>
             <input ref={fileRef} type="file" accept=".csv,text/csv,text/plain" hidden onChange={(e) => void handleFile(e.target.files?.[0])} />
           </div>
         </div>
         <p className="response-format-hint">{inputMode === "csv" ? "CSV columns: student_id,response. Quoted commas are supported." : "Use one response per line, beginning with an anonymized ID such as S01:"}</p>
+
+        {parsedResponses.length > 0 && (
+          <div className="response-preview" aria-label="Parsed response preview">
+            <div><strong>Parsed student work</strong><span>Showing {Math.min(3, parsedCount)} of {parsedCount}</span></div>
+            <ul>
+              {parsedResponses.slice(0, 3).map((response) => (
+                <li key={response.studentId}><span>{response.studentId}</span><p>{response.response}</p></li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {error && <div className="error-banner" role="alert"><strong>We hit a snag.</strong> {error}</div>}
 
@@ -122,7 +194,7 @@ export function AssignmentForm({
             <p><strong>Built for responsible review</strong><br />Insights stay tied to submitted evidence. No diagnosis, no hidden student profile.</p>
           </div>
           <button className="button button-primary button-analyze" onClick={onAnalyze} disabled={isLoading || parsedCount === 0} type="button">
-            {isLoading ? <><span className="spinner" /> Mapping student thinking…</> : <>Analyze {parsedCount || ""} responses <span aria-hidden="true">→</span></>}
+            {isLoading ? <><span className="spinner" /> Mapping student thinking…</> : <>{isSample ? "Analyze sample" : "Analyze with GPT-5.6"} <span aria-hidden="true">→</span></>}
           </button>
         </div>
       </div>

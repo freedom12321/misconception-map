@@ -1,5 +1,14 @@
 import type { Assignment, StudentResponse } from "./schema";
 
+export const emptyAssignment: Assignment = {
+  subject: "",
+  gradeLevel: "",
+  learningObjective: "",
+  question: "",
+  correctAnswer: "",
+  teacherNotes: "",
+};
+
 export const demoAssignment: Assignment = {
   subject: "Mathematics",
   gradeLevel: "Grade 6",
@@ -35,4 +44,3 @@ export const demoResponses: StudentResponse[] = [
 export const demoPlainText = demoResponses
   .map(({ studentId, response }) => `${studentId}: ${response}`)
   .join("\n");
-

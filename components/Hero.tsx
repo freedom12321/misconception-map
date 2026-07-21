@@ -2,9 +2,15 @@ type HeroProps = {
   onTryDemo: () => void;
   onAnalyzeResponses: () => void;
   isLoading: boolean;
+  liveAnalysisAvailable: boolean | null;
 };
 
-export function Hero({ onTryDemo, onAnalyzeResponses, isLoading }: HeroProps) {
+export function Hero({
+  onTryDemo,
+  onAnalyzeResponses,
+  isLoading,
+  liveAnalysisAvailable,
+}: HeroProps) {
   return (
     <header className="hero-shell">
       <nav className="top-nav" aria-label="Primary navigation">
@@ -34,16 +40,22 @@ export function Hero({ onTryDemo, onAnalyzeResponses, isLoading }: HeroProps) {
             patterns, ready-to-teach groups, and feedback you can use tomorrow.
           </p>
           <div className="hero-actions">
-            <button className="button button-primary" onClick={onTryDemo} disabled={isLoading}>
-              {isLoading ? "Mapping the class…" : "Try demo class"}
+            <button className="button button-primary" onClick={onAnalyzeResponses}>
+              Analyze my class
               <span className="button-arrow" aria-hidden="true">→</span>
             </button>
-            <button className="button button-secondary" onClick={onAnalyzeResponses}>
-              Analyze my responses
+            <button className="button button-secondary" onClick={onTryDemo} disabled={isLoading}>
+              {isLoading ? "Mapping the sample…" : "Explore sample demo"}
             </button>
           </div>
           <div className="trust-row" aria-label="Product guardrails">
-            <span>✓ Demo works without a key</span>
+            <span>
+              {liveAnalysisAvailable === true
+                ? "✓ Live GPT-5.6 connected"
+                : liveAnalysisAvailable === false
+                  ? "○ Live GPT-5.6 setup pending"
+                  : "○ Checking live analysis"}
+            </span>
             <span>✓ Anonymized by design</span>
             <span>✓ Teacher review required</span>
           </div>
@@ -100,7 +112,7 @@ export function Hero({ onTryDemo, onAnalyzeResponses, isLoading }: HeroProps) {
         <div className="steps-grid">
           <article>
             <span className="step-number">01</span>
-            <div><h3>Bring the student work</h3><p>Paste a question and anonymized responses, or load our demo class.</p></div>
+            <div><h3>Bring your student work</h3><p>Start blank, describe the task, then paste responses or upload a CSV.</p></div>
           </article>
           <article>
             <span className="step-number">02</span>

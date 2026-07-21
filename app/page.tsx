@@ -8,17 +8,28 @@ import { Hero } from "../components/Hero";
 import { AnalysisResultSchema } from "../lib/schema";
 import type { AnalysisResult, Assignment, StudentResponse } from "../lib/schema";
 import { parseStudentResponses } from "../lib/parseResponses";
-import { demoAssignment, demoPlainText, demoResponses } from "../lib/sampleData";
+import {
+  demoAssignment,
+  demoPlainText,
+  demoResponses,
+  emptyAssignment,
+} from "../lib/sampleData";
 
 type AnalysisMode = "demo" | "live";
+type LiveStatus = { available: boolean; model: string | null } | null;
+
+const DRAFT_KEY = "misconception-map-custom-draft-v2";
 
 export default function Home() {
-  const [assignment, setAssignment] = useState<Assignment>(demoAssignment);
-  const [responseText, setResponseText] = useState(demoPlainText);
+  const [assignment, setAssignment] = useState<Assignment>(emptyAssignment);
+  const [responseText, setResponseText] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [mode, setMode] = useState<AnalysisMode>("demo");
   const [model, setModel] = useState<string | null>(null);
   const [fallbackReason, setFallbackReason] = useState<string | null>(null);
+  const [isSample, setIsSample] = useState(false);
+  const [liveStatus, setLiveStatus] = useState<LiveStatus>(null);
+  const [draftReady, setDraftReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const responses = useMemo(() => parseStudentResponses(responseText), [responseText]);
@@ -26,15 +37,21 @@ export default function Home() {
   useEffect(() => {
     let timer: number | undefined;
     try {
-      const saved = window.localStorage.getItem("misconception-map-draft");
-      if (!saved) return;
-      const draft = JSON.parse(saved) as { assignment?: Assignment; responseText?: string };
-      timer = window.setTimeout(() => {
-        if (draft.assignment) setAssignment(draft.assignment);
-        if (typeof draft.responseText === "string") setResponseText(draft.responseText);
-      }, 0);
+      const saved = window.localStorage.getItem(DRAFT_KEY);
+      const applyDraft = () => setDraftReady(true);
+      if (saved) {
+        const draft = JSON.parse(saved) as { assignment?: Assignment; responseText?: string };
+        timer = window.setTimeout(() => {
+          if (draft.assignment) setAssignment(draft.assignment);
+          if (typeof draft.responseText === "string") setResponseText(draft.responseText);
+          applyDraft();
+        }, 0);
+      } else {
+        timer = window.setTimeout(applyDraft, 0);
+      }
     } catch {
-      // A malformed local draft should never block the built-in demo.
+      // A malformed local draft should never block a fresh workspace.
+      timer = window.setTimeout(() => setDraftReady(true), 0);
     }
     return () => {
       if (timer) window.clearTimeout(timer);
@@ -42,13 +59,41 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (!draftReady || isSample) return;
     window.localStorage.setItem(
-      "misconception-map-draft",
+      DRAFT_KEY,
       JSON.stringify({ assignment, responseText }),
     );
-  }, [assignment, responseText]);
+  }, [assignment, draftReady, isSample, responseText]);
 
-  async function runAnalysis(nextAssignment: Assignment, nextResponses: StudentResponse[]) {
+  useEffect(() => {
+    let active = true;
+    void fetch("/api/analyze", { cache: "no-store" })
+      .then(async (response) => await response.json() as {
+        liveAnalysisAvailable?: boolean;
+        model?: string | null;
+      })
+      .then((payload) => {
+        if (active) {
+          setLiveStatus({
+            available: Boolean(payload.liveAnalysisAvailable),
+            model: payload.model ?? null,
+          });
+        }
+      })
+      .catch(() => {
+        if (active) setLiveStatus({ available: false, model: null });
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function runAnalysis(
+    nextAssignment: Assignment,
+    nextResponses: StudentResponse[],
+    sampleMode = false,
+  ) {
     if (!nextAssignment.subject || !nextAssignment.gradeLevel || !nextAssignment.learningObjective || !nextAssignment.question || !nextAssignment.correctAnswer) {
       setError("Complete the assignment context before analyzing responses.");
       document.getElementById("assignment")?.scrollIntoView({ behavior: "smooth" });
@@ -65,7 +110,11 @@ export default function Home() {
       const response = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assignment: nextAssignment, responses: nextResponses }),
+        body: JSON.stringify({
+          assignment: nextAssignment,
+          responses: nextResponses,
+          sampleMode,
+        }),
       });
       const payload = await response.json() as {
         result?: unknown;
@@ -93,9 +142,41 @@ export default function Home() {
   function loadDemo(shouldAnalyze = false) {
     setAssignment(demoAssignment);
     setResponseText(demoPlainText);
+    setIsSample(true);
+    setResult(null);
+    setFallbackReason(null);
     setError(null);
-    if (shouldAnalyze) void runAnalysis(demoAssignment, demoResponses);
+    if (shouldAnalyze) void runAnalysis(demoAssignment, demoResponses, true);
     else document.getElementById("assignment")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function startBlank() {
+    setAssignment(emptyAssignment);
+    setResponseText("");
+    setIsSample(false);
+    setResult(null);
+    setModel(null);
+    setFallbackReason(null);
+    setError(null);
+    window.localStorage.removeItem(DRAFT_KEY);
+    window.setTimeout(
+      () => document.getElementById("assignment")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      0,
+    );
+  }
+
+  function updateAssignment(nextAssignment: Assignment) {
+    setAssignment(nextAssignment);
+    setIsSample(false);
+    setResult(null);
+    setError(null);
+  }
+
+  function updateResponses(value: string) {
+    setResponseText(value);
+    setIsSample(false);
+    setResult(null);
+    setError(null);
   }
 
   return (
@@ -104,25 +185,40 @@ export default function Home() {
         onTryDemo={() => loadDemo(true)}
         onAnalyzeResponses={() => document.getElementById("assignment")?.scrollIntoView({ behavior: "smooth" })}
         isLoading={isLoading}
+        liveAnalysisAvailable={liveStatus?.available ?? null}
       />
       <AssignmentForm
         assignment={assignment}
-        onAssignmentChange={setAssignment}
+        onAssignmentChange={updateAssignment}
         responseText={responseText}
-        onResponseTextChange={setResponseText}
-        parsedCount={responses.length}
+        onResponseTextChange={updateResponses}
+        parsedResponses={responses}
         onLoadDemo={() => loadDemo(false)}
-        onAnalyze={() => void runAnalysis(assignment, responses)}
+        onStartBlank={startBlank}
+        onAnalyze={() => void runAnalysis(assignment, responses, isSample)}
+        isSample={isSample}
+        liveAnalysisAvailable={liveStatus?.available ?? null}
+        liveModel={liveStatus?.model ?? null}
         isLoading={isLoading}
         error={error}
       />
       {result ? (
-        <AnalysisDashboard result={result} mode={mode} model={model} fallbackReason={fallbackReason} />
+        <AnalysisDashboard
+          result={result}
+          mode={mode}
+          model={model}
+          fallbackReason={fallbackReason}
+          onStartNew={startBlank}
+        />
       ) : (
-        <section className="pre-analysis-note" aria-label="Demo invitation">
-          <span>18 sample responses are ready</span>
-          <h2>One click reveals four teachable patterns.</h2>
-          <button className="button button-ink" onClick={() => loadDemo(true)} disabled={isLoading}>Run the demo analysis <span aria-hidden="true">→</span></button>
+        <section className="pre-analysis-note" aria-label="Product workflow">
+          <span>YOUR WORK, NOT A PRESET SLIDESHOW</span>
+          <h2>Every new set of responses produces a new evidence map.</h2>
+          <p>Start blank for your own class, or use the labeled sample to learn the workflow. Sample fallback is never presented as live analysis.</p>
+          <div>
+            <button className="button button-primary" onClick={startBlank}>Start a new analysis <span aria-hidden="true">→</span></button>
+            <button className="button button-ink" onClick={() => loadDemo(true)} disabled={isLoading}>Explore the sample</button>
+          </div>
         </section>
       )}
       <BuiltWithCodex />

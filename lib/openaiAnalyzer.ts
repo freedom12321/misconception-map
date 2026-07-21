@@ -38,6 +38,7 @@ export async function analyzeWithOpenAI(
 
   const response = await client.responses.parse({
     model,
+    store: false,
     input: [
       { role: "system", content: SYSTEM_PROMPT },
       {
@@ -48,7 +49,7 @@ export async function analyzeWithOpenAI(
     text: {
       format: zodTextFormat(AnalysisResultSchema, "misconception_map_analysis"),
     },
-    max_output_tokens: 16_000,
+    max_output_tokens: 12_000,
   });
 
   if (!response.output_parsed) {
@@ -60,4 +61,3 @@ export async function analyzeWithOpenAI(
     model,
   };
 }
-

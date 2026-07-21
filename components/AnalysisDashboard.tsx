@@ -9,11 +9,12 @@ type AnalysisDashboardProps = {
   mode: "demo" | "live";
   model: string | null;
   fallbackReason?: string | null;
+  onStartNew: () => void;
 };
 
 const barColors = ["coral", "gold", "blue", "purple", "rust", "sage"];
 
-export function AnalysisDashboard({ result, mode, model, fallbackReason }: AnalysisDashboardProps) {
+export function AnalysisDashboard({ result, mode, model, fallbackReason, onStartNew }: AnalysisDashboardProps) {
   const topPriority = result.misconceptions.find((item) => item.id === result.overview.topMisconceptionId) ?? result.misconceptions[0];
   const correctPercent = result.overview.totalResponses
     ? ((result.overview.correctCount + result.overview.nearCorrectCount) / result.overview.totalResponses) * 100
@@ -33,6 +34,7 @@ export function AnalysisDashboard({ result, mode, model, fallbackReason }: Analy
         <div className="analysis-meta">
           <span className={`status-chip status-chip-${mode}`}><span />{mode === "live" ? `Live ${model ?? "GPT-5.6"} mode` : "Demo mode"}</span>
           <p>Based on {result.overview.totalResponses} submitted responses · Teacher review required</p>
+          <button className="text-button results-new-button" type="button" onClick={onStartNew}>Start a new analysis <span aria-hidden="true">↗</span></button>
         </div>
       </section>
 

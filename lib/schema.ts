@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const StudentResponseSchema = z.object({
   studentId: z.string().trim().min(1).max(40),
-  response: z.string().trim().min(1).max(8_000),
+  response: z.string().trim().min(1).max(3_000),
 });
 
 export const AssignmentSchema = z.object({
@@ -100,14 +100,27 @@ export const AnalysisResultSchema = z.object({
   limitations: z.array(z.string()),
 });
 
-export const AnalyzeRequestSchema = z.object({
-  assignment: AssignmentSchema,
-  responses: z.array(StudentResponseSchema).min(1).max(200),
-  forceDemo: z.boolean().optional().default(false),
-});
+export const AnalyzeRequestSchema = z
+  .object({
+    assignment: AssignmentSchema,
+    responses: z.array(StudentResponseSchema).min(1).max(60),
+    sampleMode: z.boolean().optional().default(false),
+  })
+  .superRefine((value, context) => {
+    const totalCharacters = value.responses.reduce(
+      (total, response) => total + response.response.length,
+      0,
+    );
+    if (totalCharacters > 80_000) {
+      context.addIssue({
+        code: "custom",
+        path: ["responses"],
+        message: "Student responses exceed the 80,000 character request limit.",
+      });
+    }
+  });
 
 export type StudentResponse = z.infer<typeof StudentResponseSchema>;
 export type Assignment = z.infer<typeof AssignmentSchema>;
 export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;
 export type AnalyzeRequest = z.infer<typeof AnalyzeRequestSchema>;
-

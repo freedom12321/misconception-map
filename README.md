@@ -13,11 +13,12 @@ Teachers can usually see which answers are incorrect. The harder, more valuable 
 ## Features
 
 - Assignment context for subject, grade, objective, prompt, rubric, and teacher notes
-- Plain-text and CSV response parsing, plus browser CSV upload
+- Blank custom-analysis workspace with local draft saving
+- Plain-text and CSV response parsing, browser upload, and parsed-response preview
 - Built-in 18-student middle school fractions demo
-- Deterministic demo analysis with no credentials required
-- Optional live GPT-5.6 structured analysis through a server route
-- Zod-validated response schema with friendly fallback behavior
+- Clearly labeled deterministic fallback for the sample class only
+- Live GPT-5.6 structured analysis for all teacher-provided content
+- Zod-validated response schema with no silent mock substitution
 - Class overview and misconception distribution visualization
 - Evidence-linked misconception cards with confidence and exact quotes
 - Filterable anonymized student table with copyable feedback
@@ -52,30 +53,30 @@ Open the local URL printed by the development server.
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `OPENAI_API_KEY` | No | Enables live analysis. It is read only by the server route and is never exposed to the browser. |
+| `OPENAI_API_KEY` | Yes for custom analysis | Enables live analysis of teacher-provided content. It is read only by the server route and is never exposed to the browser. |
 | `OPENAI_MODEL` | No | Model used for live analysis. Defaults to `gpt-5.6`. |
 
 Never commit `.env.local` or an API key.
 
-## Demo mode
+## Custom and sample modes
 
-Demo mode is the default when `OPENAI_API_KEY` is not set. Run the app, select **Try demo class**, and the deterministic analyzer will return the same polished, evidence-linked fraction analysis every time.
+The app opens as a blank workspace. Teachers can describe a task, paste or upload anonymized responses, preview the parsed work, and run a fresh GPT-5.6 analysis. A custom request without `OPENAI_API_KEY` returns an explicit configuration error and keeps the browser draft—it never substitutes a generic mock result.
 
-The demo also loads from **Load demo class** in the assignment form. The source fixture is [sample-data/fractions.csv](sample-data/fractions.csv), and the expected structured result is [sample-data/fractions-analysis.json](sample-data/fractions-analysis.json).
+The optional sample loads from **Explore sample demo** or **Load sample**. With a key configured, it uses the same live GPT-5.6 route. Without a key, only this labeled sample is allowed to use its deterministic evidence-linked fallback. The source fixture is [sample-data/fractions.csv](sample-data/fractions.csv), and the expected structured result is [sample-data/fractions-analysis.json](sample-data/fractions-analysis.json).
 
-For custom content without an API key, demo mode takes a conservative approach: it preserves responses but avoids inventing content-specific misconception labels.
+The header and result badge always disclose whether live or sample fallback mode is active.
 
 ## Three-minute judge demo
 
 The shortest high-signal path is designed into the interface:
 
-1. Start on the hero and frame the problem: scores show *who* missed a question; teachers still need to understand *how* the class was thinking.
-2. Click **Try demo class**. This loads and analyzes all 18 anonymized responses in one action.
-3. Follow the on-screen **Judge demo path**: class pattern → exact evidence → tomorrow's teaching decision.
-4. Open the first full pattern card to show confidence, student IDs, exact quotes, instructional risk, and targeted practice.
-5. Filter the student table to **Add across** and copy one student-friendly feedback note.
-6. Open the reteaching plan tabs, then export the teacher Markdown report.
-7. End on **Built with Codex** to show the build-time/runtime distinction and validated analysis pipeline.
+1. Start on the hero and point out the **Live GPT-5.6 connected** indicator.
+2. Click **Analyze my class** to reveal the blank workspace. Show that assignment fields and student responses are genuinely editable.
+3. Click **Load sample**, change one response or add a new anonymized response, and click **Analyze with GPT-5.6**. Editing the sample turns it into a custom live request.
+4. Follow the on-screen **Judge demo path**: class pattern → exact evidence → tomorrow's teaching decision.
+5. Open the first pattern card to show confidence, exact quotes, instructional risk, and targeted practice.
+6. Filter the student table, copy one feedback note, then export the teacher Markdown report or student feedback CSV.
+7. Click **Start a new analysis** to prove the workflow resets, then end on **Built with Codex**.
 
 Avoid scrolling every table row or opening every cluster in the video; the product's value is the traceable path from evidence to instructional action.
 
@@ -93,7 +94,9 @@ Restart the development server. Requests go to `POST /api/analyze`, which:
 1. Validates the teacher input.
 2. Calls the OpenAI Responses API with a structured Zod output format.
 3. Validates the model result before returning it to the browser.
-4. Falls back to deterministic demo analysis if the live request fails.
+4. Returns the fresh validated result; custom requests never silently fall back to mock content.
+
+If the live request fails, the teacher's local draft remains available. Only the built-in sample may use deterministic fallback.
 
 ## Scripts
 
@@ -147,7 +150,7 @@ Downloads are generated in the browser. No database is used.
 ## Known limitations
 
 - Written responses can be incomplete or ambiguous; a classification is only a hypothesis for teacher review.
-- The deterministic analyzer is content-specific to the included fractions demo.
+- The deterministic analyzer is intentionally restricted to the included fractions sample.
 - Live analysis quality depends on the context and evidence supplied.
 - The MVP has no accounts, shared workspaces, roster integration, or database.
 - Browser storage is device-local and is not appropriate for a durable student record.
