@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { analyzeWithOpenAI } from "../../../lib/openaiAnalyzer";
 import { createMockAnalysis } from "../../../lib/mockAnalyzer";
+import { verifyAnalysisEvidence } from "../../../lib/evidence";
 import { AnalyzeRequestSchema } from "../../../lib/schema";
 
 function hasLiveAnalysis() {
@@ -35,8 +36,13 @@ export async function POST(request: Request) {
         );
       }
 
+      const verified = verifyAnalysisEvidence(
+        createMockAnalysis(payload.assignment, payload.responses),
+        payload.responses,
+      );
       return NextResponse.json({
-        result: createMockAnalysis(payload.assignment, payload.responses),
+        result: verified.result,
+        evidence: verified.verification,
         mode: "demo" as const,
         model: null,
         fallbackReason:
@@ -49,12 +55,23 @@ export async function POST(request: Request) {
         payload.assignment,
         payload.responses,
       );
-      return NextResponse.json({ result, mode: "live" as const, model });
+      const verified = verifyAnalysisEvidence(result, payload.responses);
+      return NextResponse.json({
+        result: verified.result,
+        evidence: verified.verification,
+        mode: "live" as const,
+        model,
+      });
     } catch (error) {
       console.error("OpenAI analysis failed.", error);
       if (payload.sampleMode) {
+        const verified = verifyAnalysisEvidence(
+          createMockAnalysis(payload.assignment, payload.responses),
+          payload.responses,
+        );
         return NextResponse.json({
-          result: createMockAnalysis(payload.assignment, payload.responses),
+          result: verified.result,
+          evidence: verified.verification,
           mode: "demo" as const,
           model: null,
           fallbackReason:

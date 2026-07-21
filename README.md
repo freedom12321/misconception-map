@@ -1,165 +1,135 @@
 # Misconception Map
 
-> See how your students are thinking, not just who got it wrong.
+> See the reasoning. Correct the map. Teach tomorrow.
 
-Misconception Map is a teacher decision-support tool built for the OpenAI Build Week Education track. It turns anonymized student responses into evidence-based misconception patterns, targeted reteaching groups, review-ready student feedback, and a practical plan for tomorrow.
+Misconception Map is an **evidence-verified, teacher-correctable instructional planning tool for Grade 5–8 math exit tickets**. It turns student reasoning into misconception clusters, targeted small groups, and a next-day reteaching plan.
 
-It is intentionally **not** an AI tutor, a diagnostic tool, or a generic auto-grader. Every major insight stays connected to exact language from submitted student work, and every output is framed for teacher review.
+Unlike an AI grader, Misconception Map does not reduce student work to a score. It identifies reasoning patterns, verifies the supporting evidence, lets teachers correct the map, and turns the result into a next-day teaching plan.
 
-## Why it matters
+## Product flow
 
-Teachers can usually see which answers are incorrect. The harder, more valuable question is *why students answered that way*. Looking for shared reasoning patterns across a class takes time that teachers rarely have. Misconception Map makes that thinking visible while keeping instructional judgment with the teacher.
+1. **Collect** — add a math prompt, expected reasoning, and anonymized student responses by paste, CSV upload, or one response at a time.
+2. **Understand** — inspect the misconception distribution, top teaching priority, exact evidence, and student placements.
+3. **Act** — use teacher-reviewed groups, a 10-minute mini lesson, targeted practice, and an exit ticket for the next day.
 
-## Features
+The result workspace has three primary views: **Misconception Map**, **Students**, and **Teach Tomorrow**. Exports, safety information, and Built with Codex documentation remain secondary.
 
-- Assignment context for subject, grade, objective, prompt, rubric, and teacher notes
+## What is implemented
+
 - Blank custom-analysis workspace with local draft saving
-- Plain-text and CSV response parsing, browser upload, and parsed-response preview
-- Built-in 18-student middle school fractions demo
-- Clearly labeled deterministic fallback for the sample class only
-- Live GPT-5.6 structured analysis for all teacher-provided content
-- Zod-validated response schema with no silent mock substitution
-- Class overview and misconception distribution visualization
-- Evidence-linked misconception cards with confidence and exact quotes
-- Filterable anonymized student table with copyable feedback
-- 10-minute mini lesson, targeted small groups, practice, exit ticket, and teacher script
-- Markdown, CSV, and JSON downloads plus a copyable parent/admin summary
-- Local draft persistence in `localStorage`
-- Responsive, accessible teacher-facing interface
+- Primary 18-response Grade 6 fraction exit-ticket sample
+- Plain-text parsing, CSV parsing/upload, and **Add one response**
+- Live server-side GPT-5.6 analysis through the OpenAI Responses API
+- Zod-structured model output plus server and client validation
+- Deterministic exact-substring verification of every displayed evidence quote
+- Automatic removal of unverifiable quotes; the **Evidence Verified** badge appears only after a complete pass
+- Above-the-fold response count, teaching priority, distribution, first move, mode, and evidence status
+- Teacher Review Loop for locally reassigning a student to any pattern, secure reasoning, or **Needs teacher review**
+- Local recalculation of student IDs, counts, percentages, top priority, and small-group membership without another model request
+- Teacher-adjusted Markdown, CSV, JSON, and shareable planning-summary exports
+- Explicit education-safety guardrails and honest live/demo labeling
+
+## Builder decisions
+
+- **Product:** focus on one high-value job for Grade 5–8 math teachers instead of expanding into grading, tutoring, administration, or generic chat.
+- **Engineering:** keep the API key on the server, validate structured output, verify evidence deterministically, and make teacher corrections local and immediate.
+- **Design:** organize the journey as Collect → Understand → Act; put the decision summary above the fold; keep evidence next to interpretation; make the three teacher tasks the primary navigation.
+- **Safety:** treat model classifications as reviewable hypotheses, never grades, diagnoses, or fixed student profiles.
+
+Codex accelerated implementation of these builder decisions: application architecture, schemas, server route, evidence verifier, local recalculation logic, interface system, responsive polish, exports, tests, and submission documentation. See [CODEX_USAGE.md](CODEX_USAGE.md) for the full build/runtime distinction.
 
 ## Tech stack
 
-- Next.js App Router / vinext
-- React 19 and TypeScript
-- Tailwind CSS 4 plus custom responsive CSS
-- OpenAI JavaScript SDK
-- Zod runtime validation
+- Next.js App Router / vinext, React 19, and TypeScript
+- OpenAI JavaScript SDK and Responses API
+- Zod structured output and runtime validation
+- Tailwind CSS 4 plus a custom responsive design system
 - Node test runner with `tsx`
 - Cloudflare Worker-compatible Sites build
 
-## Setup
+## Local setup
 
 Requirements: Node.js 22.13 or newer and npm.
 
 ```bash
 npm install
 cp .env.example .env.local
-npm run dev
 ```
 
-Open the local URL printed by the development server.
-
-## Environment variables
-
-| Variable | Required | Description |
-| --- | --- | --- |
-| `OPENAI_API_KEY` | Yes for custom analysis | Enables live analysis of teacher-provided content. It is read only by the server route and is never exposed to the browser. |
-| `OPENAI_MODEL` | No | Model used for live analysis. Defaults to `gpt-5.6`. |
-
-Never commit `.env.local` or an API key.
-
-## Custom and sample modes
-
-The app opens as a blank workspace. Teachers can describe a task, paste or upload anonymized responses, preview the parsed work, and run a fresh GPT-5.6 analysis. A custom request without `OPENAI_API_KEY` returns an explicit configuration error and keeps the browser draft—it never substitutes a generic mock result.
-
-The optional sample loads from **Explore sample demo** or **Load sample**. With a key configured, it uses the same live GPT-5.6 route. Without a key, only this labeled sample is allowed to use its deterministic evidence-linked fallback. The source fixture is [sample-data/fractions.csv](sample-data/fractions.csv), and the expected structured result is [sample-data/fractions-analysis.json](sample-data/fractions-analysis.json).
-
-The header and result badge always disclose whether live or sample fallback mode is active.
-
-## Three-minute judge demo
-
-The shortest high-signal path is designed into the interface:
-
-1. Start on the hero and point out the **Live GPT-5.6 connected** indicator.
-2. Click **Analyze my class** to reveal the blank workspace. Show that assignment fields and student responses are genuinely editable.
-3. Click **Load sample**, change one response or add a new anonymized response, and click **Analyze with GPT-5.6**. Editing the sample turns it into a custom live request.
-4. Follow the on-screen **Judge demo path**: class pattern → exact evidence → tomorrow's teaching decision.
-5. Open the first pattern card to show confidence, exact quotes, instructional risk, and targeted practice.
-6. Filter the student table, copy one feedback note, then export the teacher Markdown report or student feedback CSV.
-7. Click **Start a new analysis** to prove the workflow resets, then end on **Built with Codex**.
-
-Avoid scrolling every table row or opening every cluster in the video; the product's value is the traceable path from evidence to instructional action.
-
-## Live API mode
-
-Add the following to `.env.local`:
+Add the server secret to `.env.local`:
 
 ```bash
 OPENAI_API_KEY=your_key_here
 OPENAI_MODEL=gpt-5.6
 ```
 
-Restart the development server. Requests go to `POST /api/analyze`, which:
-
-1. Validates the teacher input.
-2. Calls the OpenAI Responses API with a structured Zod output format.
-3. Validates the model result before returning it to the browser.
-4. Returns the fresh validated result; custom requests never silently fall back to mock content.
-
-If the live request fails, the teacher's local draft remains available. Only the built-in sample may use deterministic fallback.
-
-## Scripts
+Then start the app:
 
 ```bash
-npm run dev      # start the local development server
-npm run build    # create the production build
-npm run lint     # run ESLint
-npm run typecheck # run the strict TypeScript check
-npm test         # run parser, schema, export, and mock-analyzer tests
+npm run dev
 ```
 
-To regenerate the checked-in sample analysis after changing the mock analyzer:
+Never commit `.env.local` or place the key in a `NEXT_PUBLIC_` variable. For production, configure `OPENAI_API_KEY` as a secret and `OPENAI_MODEL=gpt-5.6` in the hosting environment, then redeploy.
+
+## Live mode and demo mode
+
+- **Live GPT-5.6 mode:** when `OPENAI_API_KEY` is configured, both custom responses and the fraction sample make a fresh server-side request. The result displays a live model badge.
+- **Precomputed demo mode:** when no key is configured, only the built-in fraction sample can use the deterministic fallback. Custom responses return an explicit setup error. A precomputed result is never labeled as live AI.
+
+`POST /api/analyze` validates input, calls GPT-5.6 when configured, validates the structured result, removes non-exact evidence quotes, and returns separate mode and evidence-verification metadata. The API key never reaches the browser.
+
+## Sample data
+
+Use **Analyze fraction demo** for the shortest flow, or **Load sample** to inspect and edit the input first. The source fixture is [sample-data/fractions.csv](sample-data/fractions.csv); the deterministic fallback is [sample-data/fractions-analysis.json](sample-data/fractions-analysis.json).
+
+With a key configured, loading the sample does **not** force a mock result: clicking Analyze sends those 18 responses through the same live GPT-5.6 route. Editing or adding a response turns the workspace into a custom live request.
+
+To regenerate the checked-in deterministic fallback after intentional mock-analyzer changes:
 
 ```bash
 npx tsx scripts/generate-sample.ts
 ```
 
-## Exports
+## Testing
 
-After running an analysis, scroll to **Take it with you**:
+```bash
+npm test
+npm run lint
+npm run typecheck
+npm run build
+```
 
-- **Teacher report (.md):** top priority, clusters, evidence, practice, small groups, lesson script, common wrong answers, exit ticket, and family/admin summary
-- **Student feedback (.csv):** original response, status, pattern, confidence, teacher note, feedback, and next step for each anonymized ID
-- **Full analysis (.json):** the complete validated result
-- **Parent/admin summary:** copied directly to the clipboard
+Tests cover parsing, request limits, honest route fallback, schema validation, exact evidence verification, removal of fabricated quotes, teacher reassignment, stale-ID prevention in small groups, and useful exports.
 
-Downloads are generated in the browser. No database is used.
+## Three-minute judging demo
 
-## Privacy and responsible use
+1. **0:00–0:25 — Positioning:** show the Grade 5–8 math focus, Collect → Understand → Act, and the exact “Unlike an AI grader…” differentiation.
+2. **0:25–0:50 — Real input:** open the workspace, load the fraction sample, add a new anonymized response, and point to **Live GPT-5.6 connected**.
+3. **0:50–1:20 — Live proof:** click Analyze and show the **Live GPT-5.6** and **Evidence Verified** badges beside the above-the-fold priority, distribution, and first move.
+4. **1:20–1:50 — Evidence:** in **Misconception Map**, show exact student quotes and the grounded teacher interpretation.
+5. **1:50–2:20 — Teacher control:** in **Students**, move one student to another cluster. Show **Teacher adjusted**, changed counts, and the updated small-group roster without rerunning AI.
+6. **2:20–2:42 — Action:** open **Teach Tomorrow** and show “What I would teach tomorrow,” one small group, and the exit ticket.
+7. **2:42–3:00 — Implementation:** download the teacher report, then show **Built with Codex** and explain build-time Codex versus runtime GPT-5.6.
 
-- Use anonymized IDs, not student names.
-- Analysis is based only on submitted responses and assignment context.
-- Misconception Map does not diagnose students or infer sensitive attributes.
-- Teacher review is required before using feedback or grouping decisions.
-- In live mode, submitted content is sent to the configured OpenAI API account under that account's data controls.
-- Local drafts are stored only in the current browser's `localStorage`.
+## Safety and limitations
 
-## Project map
+- Teacher review is required before acting on classifications, groups, or feedback.
+- Analysis is based only on the submitted responses and assignment context.
+- Use anonymized student IDs, never real names.
+- This tool does not diagnose students or infer disability, identity, background, or a fixed profile.
+- Written exit-ticket responses can be incomplete; a pattern is an instructional hypothesis.
+- Browser drafts are device-local and are not a durable student record.
 
-- `app/page.tsx` — client workflow and state
-- `app/api/analyze/route.ts` — validated live/demo analysis route
-- `components/` — product sections and interactions
-- `lib/schema.ts` — shared TypeScript and Zod contracts
-- `lib/mockAnalyzer.ts` — deterministic demo analysis
-- `lib/openaiAnalyzer.ts` — OpenAI Responses API integration
-- `lib/parseResponses.ts` — CSV and plain-text parsing
-- `lib/exports.ts` — Markdown and feedback CSV exports
-- `sample-data/` — judge-ready input and output fixtures
-- `tests/` — parser, schema, exports, and mock analyzer coverage
+## Key files
 
-## Known limitations
+- `app/api/analyze/route.ts` — live/demo boundary and verified response envelope
+- `lib/openaiAnalyzer.ts` — server-side GPT-5.6 structured analysis
+- `lib/evidence.ts` — deterministic exact-substring evidence verification
+- `lib/teacherReview.ts` — local cluster, percentage, overview, and group recalculation
+- `components/AnalysisDashboard.tsx` — three-view teacher decision workspace
+- `lib/exports.ts` — teacher report, action sheet, structured JSON, and planning summary
+- `tests/` — route, evidence, teacher review, parsing, schema, mock, and export tests
 
-- Written responses can be incomplete or ambiguous; a classification is only a hypothesis for teacher review.
-- The deterministic analyzer is intentionally restricted to the included fractions sample.
-- Live analysis quality depends on the context and evidence supplied.
-- The MVP has no accounts, shared workspaces, roster integration, or database.
-- Browser storage is device-local and is not appropriate for a durable student record.
+## Submission placeholder
 
-## Future improvements
-
-- Teacher editing and confirmation of clusters before export
-- Longitudinal misconception tracking across assignments
-- LMS and roster integrations with stronger privacy controls
-- Rubric import and multi-question assignment analysis
-- Multilingual feedback review
-- Classroom-level evaluation of cluster usefulness and teacher time saved
+Required `/feedback` Codex Session ID: **TODO — paste the session ID from the Codex `/feedback` command into the Devpost submission form.**

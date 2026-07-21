@@ -11,6 +11,7 @@ export function exportFeedbackCsv(result: AnalysisResult): string {
     "original_response",
     "status",
     "misconception_cluster",
+    "small_group",
     "confidence_percent",
     "teacher_note",
     "student_friendly_feedback",
@@ -19,6 +20,11 @@ export function exportFeedbackCsv(result: AnalysisResult): string {
   const misconceptionLabels = new Map(
     result.misconceptions.map((item) => [item.id, item.title]),
   );
+  const groupNames = new Map(
+    result.reteachingPlan.smallGroups.flatMap((group) =>
+      group.studentIds.map((studentId) => [studentId, group.groupName] as const),
+    ),
+  );
   const rows = result.students.map((student) => [
     student.studentId,
     student.response,
@@ -26,12 +32,23 @@ export function exportFeedbackCsv(result: AnalysisResult): string {
     student.misconceptionId
       ? misconceptionLabels.get(student.misconceptionId) ?? student.misconceptionId
       : "",
+    groupNames.get(student.studentId) ?? "Needs teacher review",
     Math.round(student.confidence * 100),
     student.teacherNote,
     student.studentFeedback,
     student.nextStep,
   ]);
   return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+export function exportPlanningSummary(result: AnalysisResult): string {
+  const topPriority = result.misconceptions.find(
+    (item) => item.id === result.overview.topMisconceptionId,
+  );
+  const prioritySentence = topPriority
+    ? `The current top teaching priority is ${topPriority.title.toLowerCase()}, a pattern assigned to ${topPriority.studentIds.length} students after teacher review.`
+    : "No shared misconception pattern is currently assigned as the top teaching priority.";
+  return `This Grade 5–8 math exit-ticket review is based on ${result.overview.totalResponses} anonymized submitted responses. ${result.overview.misconceptionCount} responses are currently grouped into misconception patterns and ${result.overview.unclearCount} need further teacher review. ${prioritySentence} These groupings are instructional hypotheses, not grades or diagnoses, and require teacher review before use.`;
 }
 
 export function exportTeacherMarkdown(result: AnalysisResult): string {
@@ -147,9 +164,9 @@ export function exportTeacherMarkdown(result: AnalysisResult): string {
     "",
     ...result.reteachingPlan.exitTicket.lookFors.map((item) => `- ${item}`),
     "",
-    "## Family / administrator summary",
+    "## Shareable planning summary",
     "",
-    result.parentOrAdminSummary,
+    exportPlanningSummary(result),
     "",
     "## Guardrails",
     "",

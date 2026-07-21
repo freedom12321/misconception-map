@@ -8,6 +8,8 @@ import { Hero } from "../components/Hero";
 import { AnalysisResultSchema } from "../lib/schema";
 import type { AnalysisResult, Assignment, StudentResponse } from "../lib/schema";
 import { parseStudentResponses } from "../lib/parseResponses";
+import { verifyAnalysisEvidence } from "../lib/evidence";
+import type { EvidenceVerification } from "../lib/evidence";
 import {
   demoAssignment,
   demoPlainText,
@@ -27,6 +29,7 @@ export default function Home() {
   const [mode, setMode] = useState<AnalysisMode>("demo");
   const [model, setModel] = useState<string | null>(null);
   const [fallbackReason, setFallbackReason] = useState<string | null>(null);
+  const [evidenceVerification, setEvidenceVerification] = useState<EvidenceVerification | null>(null);
   const [isSample, setIsSample] = useState(false);
   const [liveStatus, setLiveStatus] = useState<LiveStatus>(null);
   const [draftReady, setDraftReady] = useState(false);
@@ -121,12 +124,15 @@ export default function Home() {
         mode?: AnalysisMode;
         model?: string | null;
         fallbackReason?: string | null;
+        evidence?: EvidenceVerification;
         error?: string;
       };
       if (!response.ok || !payload.result) throw new Error(payload.error ?? "The analysis could not be completed.");
       const validated = AnalysisResultSchema.safeParse(payload.result);
       if (!validated.success) throw new Error("The analysis returned an unexpected format. Please try again.");
-      setResult(validated.data);
+      const clientVerified = verifyAnalysisEvidence(validated.data, nextResponses);
+      setResult(clientVerified.result);
+      setEvidenceVerification(payload.evidence ?? clientVerified.verification);
       setMode(payload.mode ?? "demo");
       setModel(payload.model ?? null);
       setFallbackReason(payload.fallbackReason ?? null);
@@ -145,6 +151,7 @@ export default function Home() {
     setIsSample(true);
     setResult(null);
     setFallbackReason(null);
+    setEvidenceVerification(null);
     setError(null);
     if (shouldAnalyze) void runAnalysis(demoAssignment, demoResponses, true);
     else document.getElementById("assignment")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -157,6 +164,7 @@ export default function Home() {
     setResult(null);
     setModel(null);
     setFallbackReason(null);
+    setEvidenceVerification(null);
     setError(null);
     window.localStorage.removeItem(DRAFT_KEY);
     window.setTimeout(
@@ -208,13 +216,14 @@ export default function Home() {
           mode={mode}
           model={model}
           fallbackReason={fallbackReason}
+          evidenceVerification={evidenceVerification}
           onStartNew={startBlank}
         />
       ) : (
         <section className="pre-analysis-note" aria-label="Product workflow">
-          <span>YOUR WORK, NOT A PRESET SLIDESHOW</span>
-          <h2>Every new set of responses produces a new evidence map.</h2>
-          <p>Start blank for your own class, or use the labeled sample to learn the workflow. Sample fallback is never presented as live analysis.</p>
+          <span>COLLECT → UNDERSTAND → ACT</span>
+          <h2>Every new set of math responses produces a new, reviewable evidence map.</h2>
+          <p>Start blank for your own Grade 5–8 exit ticket, or use the labeled fraction sample. Live GPT‑5.6 analysis and precomputed demo mode are always identified.</p>
           <div>
             <button className="button button-primary" onClick={startBlank}>Start a new analysis <span aria-hidden="true">→</span></button>
             <button className="button button-ink" onClick={() => loadDemo(true)} disabled={isLoading}>Explore the sample</button>
@@ -224,8 +233,8 @@ export default function Home() {
       <BuiltWithCodex />
       <footer className="site-footer">
         <div className="brand"><span className="brand-mark" aria-hidden="true">M</span><span>Misconception Map</span></div>
-        <p>See the thinking. Plan the next move.</p>
-        <div><a href="#impact">Teacher impact</a><a href="#built-with-codex">Built with Codex</a><span>Education · Build Week 2026</span></div>
+        <p>See the reasoning. Correct the map. Teach tomorrow.</p>
+        <div><a href="#impact">Teacher impact</a><a href="#built-with-codex">Built with Codex</a><span>Grade 5–8 math · Build Week 2026</span></div>
       </footer>
     </div>
   );

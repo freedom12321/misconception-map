@@ -24,28 +24,27 @@ export function Hero({
           <a href="#built-with-codex">Build Week</a>
         </div>
         <button className="button button-small button-ink" onClick={onAnalyzeResponses}>
-          Analyze responses <span aria-hidden="true">↗</span>
+          Analyze a math exit ticket <span aria-hidden="true">↗</span>
         </button>
       </nav>
 
       <div className="hero-grid" id="top">
         <div className="hero-copy">
-          <div className="eyebrow"><span className="eyebrow-dot" /> Teacher decision support</div>
+          <div className="eyebrow"><span className="eyebrow-dot" /> Grade 5–8 math exit tickets</div>
           <h1>
-            See how your students are thinking,
-            <em> not just who got it wrong.</em>
+            See the reasoning. Correct the map.
+            <em> Teach tomorrow.</em>
           </h1>
           <p className="hero-lede">
-            Turn a pile of student answers into evidence-based misconception
-            patterns, ready-to-teach groups, and feedback you can use tomorrow.
+            Misconception Map is an evidence-verified, teacher-correctable instructional planning tool for Grade 5–8 math exit tickets. It turns student reasoning into misconception clusters, targeted small groups, and a next-day reteaching plan.
           </p>
           <div className="hero-actions">
             <button className="button button-primary" onClick={onAnalyzeResponses}>
-              Analyze my class
+              Analyze a math exit ticket
               <span className="button-arrow" aria-hidden="true">→</span>
             </button>
             <button className="button button-secondary" onClick={onTryDemo} disabled={isLoading}>
-              {isLoading ? "Mapping the sample…" : "Explore sample demo"}
+              {isLoading ? "Mapping the sample…" : "Analyze fraction demo"}
             </button>
           </div>
           <div className="trust-row" aria-label="Product guardrails">
@@ -102,7 +101,7 @@ export function Hero({
           </div>
           <div className="floating-note floating-note-two">
             <span aria-hidden="true">✓</span>
-            <p><strong>Tomorrow’s plan</strong><br />ready in seconds</p>
+            <p><strong>Tomorrow’s plan</strong><br />ready for teacher review</p>
           </div>
         </div>
       </div>
@@ -112,15 +111,15 @@ export function Hero({
         <div className="steps-grid">
           <article>
             <span className="step-number">01</span>
-            <div><h3>Bring your student work</h3><p>Start blank, describe the task, then paste responses or upload a CSV.</p></div>
+            <div><h3>Collect</h3><p>Add the math prompt, expected reasoning, and anonymized exit-ticket responses.</p></div>
           </article>
           <article>
             <span className="step-number">02</span>
-            <div><h3>See the thinking patterns</h3><p>Spot shared reasoning errors with exact evidence from original answers.</p></div>
+            <div><h3>Understand</h3><p>See shared reasoning patterns, inspect exact evidence, and correct the map.</p></div>
           </article>
           <article>
             <span className="step-number">03</span>
-            <div><h3>Teach the next move</h3><p>Get small groups, feedback, practice, and a 10-minute mini lesson.</p></div>
+            <div><h3>Act</h3><p>Turn reviewed patterns into targeted groups and a next-day teaching plan.</p></div>
           </article>
         </div>
       </section>
@@ -128,15 +127,17 @@ export function Hero({
       <section className="impact-proof" id="impact" aria-labelledby="impact-title">
         <div className="impact-copy">
           <p className="section-kicker">WHY THIS MATTERS</p>
-          <h2 id="impact-title">From a stack of answers to one reviewable teaching decision.</h2>
-          <p>Misconception Map does not replace a teacher or declare a final grade. It shortens the first-pass review so teachers can spend their time confirming patterns, listening to students, and choosing the right next move.</p>
+          <h2 id="impact-title">Evidence, correction, then action—not a score.</h2>
+          <p>Unlike an AI grader, Misconception Map does not reduce student work to a score. It identifies reasoning patterns, verifies the supporting evidence, lets teachers correct the map, and turns the result into a next-day teaching plan.</p>
         </div>
-        <div className="impact-equation" aria-label="18 student explanations become 4 shared reasoning patterns and 1 plan for tomorrow">
-          <div><strong>18</strong><span>student explanations</span></div>
+        <div className="impact-equation" aria-label="Raw responses become misconception patterns, targeted groups, and a next-day lesson">
+          <div><strong>Raw</strong><span>student responses</span></div>
           <b aria-hidden="true">→</b>
-          <div><strong>4</strong><span>shared reasoning patterns</span></div>
+          <div><strong>Map</strong><span>misconception patterns</span></div>
           <b aria-hidden="true">→</b>
-          <div><strong>1</strong><span>plan for tomorrow</span></div>
+          <div><strong>Group</strong><span>targeted students</span></div>
+          <b aria-hidden="true">→</b>
+          <div><strong>Act</strong><span>next-day lesson</span></div>
         </div>
         <div className="impact-guardrail"><span>Teacher stays in control</span><strong>Evidence, not verdicts.</strong><p>Every recommendation is a hypothesis tied to student work and marked for teacher review.</p></div>
       </section>

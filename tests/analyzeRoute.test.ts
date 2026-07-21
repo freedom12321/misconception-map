@@ -35,10 +35,16 @@ test("the labeled sample can use deterministic fallback without an API key", asy
   delete process.env.OPENAI_API_KEY;
   try {
     const response = await POST(requestFor(true));
-    const payload = await response.json() as { mode?: string; result?: unknown };
+    const payload = await response.json() as {
+      mode?: string;
+      result?: unknown;
+      evidence?: { verified?: boolean; removedQuotes?: number };
+    };
     assert.equal(response.status, 200);
     assert.equal(payload.mode, "demo");
     assert.ok(payload.result);
+    assert.equal(payload.evidence?.verified, true);
+    assert.equal(payload.evidence?.removedQuotes, 0);
   } finally {
     if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
     else process.env.OPENAI_API_KEY = previousKey;

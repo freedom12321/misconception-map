@@ -45,21 +45,21 @@ export function MisconceptionCard({ item, rank }: { item: Misconception; rank: n
           <span><i /> Evidence from student work</span>
           <small>Exact submitted language</small>
         </div>
-        <div className="quote-grid">
+        {item.evidenceQuotes.length > 0 ? <div className="quote-grid">
           {item.evidenceQuotes.map((evidence) => (
             <blockquote key={`${evidence.studentId}-${evidence.quote}`}>
               <span>{evidence.studentId}</span>
               “{evidence.quote}”
             </blockquote>
           ))}
-        </div>
+        </div> : <p className="empty-evidence-note">No verified quote remains for this teacher-adjusted pattern. Review the original responses in Students before acting.</p>}
       </div>
 
       <div className="teacher-move">
         <div className="move-label"><span aria-hidden="true">→</span><strong>Suggested next move</strong></div>
         <p>{item.teacherMove}</p>
         <button className="text-button" type="button" onClick={() => setShowPractice((value) => !value)} aria-expanded={showPractice}>
-          {showPractice ? "Hide practice" : "Create practice"} <span aria-hidden="true">{showPractice ? "↑" : "↗"}</span>
+          {showPractice ? "Hide practice" : "Show targeted practice"} <span aria-hidden="true">{showPractice ? "↑" : "↗"}</span>
         </button>
       </div>
 
@@ -82,4 +82,3 @@ export function MisconceptionCard({ item, rank }: { item: Misconception; rank: n
     </article>
   );
 }
-

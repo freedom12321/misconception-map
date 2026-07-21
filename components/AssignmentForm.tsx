@@ -69,8 +69,8 @@ export function AssignmentForm({
       <div className="section-heading split-heading">
         <div>
           <p className="section-kicker">NEW ANALYSIS</p>
-          <h2 id="assignment-title">Bring the learning moment into focus.</h2>
-          <p>Give the map enough context to interpret the thinking—not just score the answer.</p>
+          <h2 id="assignment-title">Bring a math exit ticket into focus.</h2>
+          <p>Add the exact task and expected reasoning so the map can interpret thinking—not auto-grade an answer.</p>
         </div>
         <div className="workspace-heading-actions">
           <button className="button button-secondary" onClick={onStartBlank} type="button">
@@ -105,9 +105,9 @@ export function AssignmentForm({
         </div>
 
         <div className="workflow-ribbon" aria-label="Custom analysis workflow">
-          <div className={completedContext === 5 ? "complete" : ""}><span>01</span><p><strong>Describe the task</strong>{completedContext}/5 required fields complete</p></div>
-          <div className={parsedCount > 0 ? "complete" : ""}><span>02</span><p><strong>Add student work</strong>{parsedCount || 0} responses detected</p></div>
-          <div><span>03</span><p><strong>Review the map</strong>Evidence, groups, lesson, exports</p></div>
+          <div className={completedContext === 5 ? "complete" : ""}><span>01</span><p><strong>Collect context</strong>{completedContext}/5 required fields complete</p></div>
+          <div className={parsedCount > 0 ? "complete" : ""}><span>02</span><p><strong>Collect student work</strong>{parsedCount || 0} responses detected</p></div>
+          <div><span>03</span><p><strong>Understand → Act</strong>Verify, correct, group, and plan</p></div>
         </div>
 
         <div className="form-section-title">
@@ -117,11 +117,11 @@ export function AssignmentForm({
         <div className="form-grid form-grid-three">
           <label>
             <span>Subject</span>
-            <input value={assignment.subject} onChange={(e) => updateField("subject", e.target.value)} placeholder="e.g. Mathematics" />
+            <select value={assignment.subject} onChange={(e) => updateField("subject", e.target.value)}><option value="">Select subject</option><option value="Mathematics">Mathematics</option></select>
           </label>
           <label>
             <span>Grade level</span>
-            <input value={assignment.gradeLevel} onChange={(e) => updateField("gradeLevel", e.target.value)} placeholder="e.g. Grade 6" />
+            <select value={assignment.gradeLevel} onChange={(e) => updateField("gradeLevel", e.target.value)}><option value="">Select grade</option>{[5, 6, 7, 8].map((grade) => <option key={grade} value={`Grade ${grade}`}>Grade {grade}</option>)}</select>
           </label>
           <label className="span-two">
             <span>Learning objective</span>
@@ -191,7 +191,7 @@ export function AssignmentForm({
         <div className="form-submit-row">
           <div className="privacy-hint">
             <span aria-hidden="true">◉</span>
-            <p><strong>Built for responsible review</strong><br />Insights stay tied to submitted evidence. No diagnosis, no hidden student profile.</p>
+            <p><strong>Teacher review required</strong><br />Submitted evidence only · Anonymized IDs · No diagnosis</p>
           </div>
           <button className="button button-primary button-analyze" onClick={onAnalyze} disabled={isLoading || parsedCount === 0} type="button">
             {isLoading ? <><span className="spinner" /> Mapping student thinking…</> : <>{isSample ? "Analyze sample" : "Analyze with GPT-5.6"} <span aria-hidden="true">→</span></>}

@@ -18,8 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.includes("localhost") ? "http" : "https");
   const metadataBase = new URL(`${protocol}://${host}`);
-  const title = "Misconception Map · See how students are thinking";
-  const description = "Turn student responses into evidence-based misconception patterns, reteaching groups, feedback, and practice.";
+  const title = "Misconception Map · Evidence to tomorrow's math lesson";
+  const description = "An evidence-verified, teacher-correctable planning tool for Grade 5–8 math exit tickets.";
 
   return {
     metadataBase,

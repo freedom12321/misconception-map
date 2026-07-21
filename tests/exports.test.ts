@@ -23,6 +23,7 @@ test("CSV feedback export escapes feedback and includes all students", () => {
   assert.equal(lines.length, demoResponses.length + 1);
   assert.match(lines[0], /original_response/);
   assert.match(lines[0], /teacher_note/);
+  assert.match(lines[0], /small_group/);
   assert.match(lines[0], /student_friendly_feedback/);
   assert.match(csv, /^S01,.*?,correct,/m);
   assert.match(csv, /^S02,.*?,misconception,/m);
