@@ -58,6 +58,6 @@ The builder used Codex as an engineering, product-design, QA, and submission col
 ## Required links to add before submission
 
 - Public project URL: `TODO`
-- Public or judge-shared GitHub repository: `TODO`
+- Public GitHub repository: `https://github.com/freedom12321/misconception-map`
 - Public YouTube demo under three minutes: `TODO`
 - `/feedback` Codex Session ID: `TODO`

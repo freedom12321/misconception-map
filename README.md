@@ -86,7 +86,7 @@ Never commit `.env.local` or place the key in a `NEXT_PUBLIC_` variable. For pro
 
 - `.env.local`, `.env*`, build output, Wrangler logs, and the local Sites binding are ignored.
 - Commit `.env.example` only; it contains no credential.
-- `.openai/hosting.example.json` is a placeholder. Keep the real `.openai/hosting.json` local.
+- Codex Sites uses a local `.openai/hosting.json`. Fresh GitHub clones do not need this file; the build defaults to no database or object-storage bindings when it is absent.
 - Before every public push, run `git grep -l -E 'sk-(proj-)?[A-Za-z0-9_-]{16,}'` and confirm it returns no files.
 
 ## Live mode and demo mode
