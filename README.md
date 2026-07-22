@@ -29,14 +29,25 @@ The result workspace has three primary views: **Misconception Map**, **Students*
 - Teacher-adjusted Markdown, CSV, JSON, and shareable planning-summary exports
 - Explicit education-safety guardrails and honest live/demo labeling
 
-## Builder decisions
+## Key Product Decisions
+
+The builder made and reviewed the core product, instructional, engineering, and design decisions:
 
 - **Product:** focus on one high-value job for Grade 5–8 math teachers instead of expanding into grading, tutoring, administration, or generic chat.
 - **Engineering:** keep the API key on the server, validate structured output, verify evidence deterministically, and make teacher corrections local and immediate.
 - **Design:** organize the journey as Collect → Understand → Act; put the decision summary above the fold; keep evidence next to interpretation; make the three teacher tasks the primary navigation.
 - **Safety:** treat model classifications as reviewable hypotheses, never grades, diagnoses, or fixed student profiles.
 
-Codex accelerated implementation of these builder decisions: application architecture, schemas, server route, evidence verifier, local recalculation logic, interface system, responsive polish, exports, tests, and submission documentation. See [CODEX_USAGE.md](CODEX_USAGE.md) for the full build/runtime distinction.
+## How Codex Accelerated Development
+
+Codex served as an engineering, product-design, and QA collaborator during development. It accelerated:
+
+- **Product and UX implementation:** translated the builder's Collect → Understand → Act direction into the result hierarchy, three-view workspace, teacher-review interaction, responsive dashboard, and clearer instructional copy.
+- **Technical implementation:** helped build the server-side GPT-5.6 route, Zod schemas, exact-substring evidence verifier, local teacher-adjustment calculations, CSV parsing, and practical exports.
+- **Quality assurance:** identified misleading live/demo states, fabricated-evidence risks, stale small-group IDs, and broken or weak demo flows; then helped add focused tests and verify lint and production builds.
+- **Submission readiness:** strengthened the README, demo script, safety language, public-repository hygiene, and the explanation of how Codex and GPT-5.6 play different roles.
+
+Codex was used to build and validate the product; it is not the runtime analysis engine. At runtime, GPT-5.6 analyzes anonymized responses through the server-side OpenAI API. The builder reviewed and approved the final product decisions and implementation. See [CODEX_USAGE.md](CODEX_USAGE.md) for the detailed build/runtime distinction.
 
 ## Tech stack
 
