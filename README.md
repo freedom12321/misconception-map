@@ -119,16 +119,6 @@ npm run build
 
 Tests cover parsing, request limits, honest route fallback, schema validation, exact evidence verification, removal of fabricated quotes, teacher reassignment, stale-ID prevention in small groups, and useful exports.
 
-## Three-minute judging demo
-
-1. **0:00–0:25 — Positioning:** show the Grade 5–8 math focus, Collect → Understand → Act, and the exact “Unlike an AI grader…” differentiation.
-2. **0:25–0:50 — Real input:** open the workspace, load the fraction sample, add a new anonymized response, and point to **Live GPT-5.6 connected**.
-3. **0:50–1:20 — Live proof:** click Analyze and show the **Live GPT-5.6** and **Evidence Verified** badges beside the above-the-fold priority, distribution, and first move.
-4. **1:20–1:50 — Evidence:** in **Misconception Map**, show exact student quotes and the grounded teacher interpretation.
-5. **1:50–2:20 — Teacher control:** in **Students**, move one student to another cluster. Show **Teacher adjusted**, changed counts, and the updated small-group roster without rerunning AI.
-6. **2:20–2:42 — Action:** open **Teach Tomorrow** and show “What I would teach tomorrow,” one small group, and the exit ticket.
-7. **2:42–3:00 — Implementation:** download the teacher report, then show **Built with Codex** and explain build-time Codex versus runtime GPT-5.6.
-
 ## Safety and limitations
 
 - Teacher review is required before acting on classifications, groups, or feedback.
@@ -147,7 +137,3 @@ Tests cover parsing, request limits, honest route fallback, schema validation, e
 - `components/AnalysisDashboard.tsx` — three-view teacher decision workspace
 - `lib/exports.ts` — teacher report, action sheet, structured JSON, and planning summary
 - `tests/` — route, evidence, teacher review, parsing, schema, mock, and export tests
-
-## Submission placeholder
-
-Required `/feedback` Codex Session ID: **TODO — paste the session ID from the Codex `/feedback` command into the Devpost submission form.**
